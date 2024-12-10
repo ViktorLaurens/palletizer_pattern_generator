@@ -1,4 +1,4 @@
-from .utils import Box, Pallet
+from .utils import Box, Pallet, visualize
 
 def main():
     """
@@ -13,7 +13,7 @@ def main():
     print(f"Total boxes placed: {total_boxes}")
 
     # Visualize the packing pattern
-    pallet.visualize(box, poses)
+    visualize(box, poses)
 
 if __name__ == "__main__":
     main()

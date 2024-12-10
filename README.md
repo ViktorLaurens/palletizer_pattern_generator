@@ -100,7 +100,7 @@ For a pallet with dimensions (W=120cm, L=100cm) and a box with size (W=20cm, L=1
 For a pallet with dimensions (W=70cm, L=60cm) and a box with size (W=40cm, L=30cm), the solution is: 
 ![Screenshot](res/figure_3.png)
 
-For a pallet with dimensions (W=120cm, L=100cm) and two different boxes with sizes (W=40cm, L=30cm) and (W=22cm, L=17cm), the solution is: 
+For a pallet with dimensions (W=120cm, L=100cm) and two different boxes with sizes (W=40cm, L=30cm) and (W=22cm, L=17cm), the solution when prioritizing the bigger box is: 
 ![Screenshot](res/figure_4.png)
 
 You are asked to choose an option again. Entering 0 will stop the program: 
@@ -117,3 +117,19 @@ pytest
 Running pytest in the terminal should output the following: 
 
 ![Screenshot](res/pytest_output.png)
+
+## License
+Distributed under the [MIT](https://choosealicense.com/licenses/mit/) License. See `LICENSE` for more information.
+
+## Acknowledgements
+- [NumPy](https://numpy.org/) - A powerful library for numerical computations in Python.
+- [Denavit-Hartenberg Method](https://www.researchgate.net/publication/270576179_DIFFERENCE_BETWEEN_DENAVIT_-_HARTENBERG_D-H_CLASSICAL_AND_MODIFIED_CONVENTIONS_FOR_FORWARD_KINEMATICS_OF_ROBOTS_WITH_CASE_STUDY) - The foundation for kinematic modeling in robotics.
+
+
+## Authors and Contact
+- Developed by [@ViktorLaurens](https://github.com/ViktorLaurens/)
+- Feel free to reach out via GitHub Issues or [email](mailto:viktor@example.com).
+
+## Badges
+[![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)  
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)

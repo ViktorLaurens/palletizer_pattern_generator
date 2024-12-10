@@ -121,8 +121,13 @@ class Pallet:
         area_box = box.width * box.length
         amount_boxes = len(pattern)
         used_space = amount_boxes * area_box
+        usable_space = used_space
         free_space_rectangles = self.calc_free_space_rectangles(pattern, box)
-        return self.width * self.length - used_space
+        for rect in free_space_rectangles:
+            _, _, w, l = rect
+            if self.check_free_space_rectangle(rect, box):
+                usable_space += w * l
+        return usable_space
     
     def calc_free_space_rectangles(self, pallet, box, pattern):
         """

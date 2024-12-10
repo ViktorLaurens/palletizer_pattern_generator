@@ -62,3 +62,5 @@ def test_calc_free_space_rectangles():
     assert free_rectangles[0] == expected_above
     assert free_rectangles[1] == expected_right
 
+
+

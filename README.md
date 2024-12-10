@@ -83,3 +83,37 @@ After installation, run the project using the following command:
 ```bash
 python -m ppg
 ```
+
+## Usage and examples
+When you run the command above in the terminal, you will be greeted with the following prompt:
+ 
+![Screenshot](res/screenshot_usage_1.png)
+
+The menu shows you the options you have. Entering 1, 2, 3 or 4 will calculate the optimal stacking pattern for the given pallet and box size. Each time the solution is visualized. Here are the visualizations:  
+
+For a pallet with dimensions (W=120cm, L=100cm) and a box with size (W=22cm, L=17cm), the solution is: 
+![Screenshot](res/figure_1.png)
+
+For a pallet with dimensions (W=120cm, L=100cm) and a box with size (W=20cm, L=10cm), the solution is: 
+![Screenshot](res/figure_2.png)
+
+For a pallet with dimensions (W=70cm, L=60cm) and a box with size (W=40cm, L=30cm), the solution is: 
+![Screenshot](res/figure_3.png)
+
+For a pallet with dimensions (W=120cm, L=100cm) and two different boxes with sizes (W=40cm, L=30cm) and (W=22cm, L=17cm), the solution is: 
+![Screenshot](res/figure_4.png)
+
+You are asked to choose an option again. Entering 0 will stop the program: 
+
+![Screenshot](res/screenshot_usage_2.png)
+
+## Running Tests
+To run the tests in the `tests/` folder, run the following command:
+
+```bash
+pytest
+```
+
+Running pytest in the terminal should output the following: 
+
+![Screenshot](res/pytest_output.png)

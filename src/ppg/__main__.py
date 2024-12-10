@@ -13,7 +13,7 @@ def main():
     print(f"Total boxes placed: {total_boxes}")
 
     # Visualize the packing pattern
-    visualize(box, poses)
+    visualize(box, pallet, poses)
 
 if __name__ == "__main__":
     main()

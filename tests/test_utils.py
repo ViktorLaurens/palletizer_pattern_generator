@@ -35,5 +35,30 @@ def test_check_free_space_rectangle(rect, box_dim, expected):
     box = Box(*box_dim)
     assert pallet.check_free_space_rectangle(rect, box) == expected
 
+def test_calc_free_space_rectangles():
+    """Test the calc_free_space_rectangles method."""
+    # Create a pallet and a box
+    pallet = Pallet(120, 100)
+    box = Box(20, 10)
 
+    # Define the pattern of placed boxes
+    pattern = [
+        (0, 0, 0),  # Box at (0, 0), no rotation
+        (20, 0, 0),  # Box at (20, 0), no rotation
+        (40, 0, 0),  # Box at (40, 0), no rotation
+    ]
+
+    # Expected results
+    max_x = 40 + box.width  # Last box's x position + width
+    max_y = 0 + box.length  # Last box's y position + length
+    expected_above = (0, max_y, pallet.width, pallet.length - max_y)
+    expected_right = (max_x, 0, pallet.width - max_x, pallet.length)
+
+    # Call the method
+    free_rectangles = pallet.calc_free_space_rectangles(pallet, box, pattern)
+
+    # Check the results
+    assert len(free_rectangles) == 2
+    assert free_rectangles[0] == expected_above
+    assert free_rectangles[1] == expected_right
 

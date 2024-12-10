@@ -37,7 +37,7 @@ class Pallet:
         n_boxes = int(n_boxes_w * n_boxes_l)
         pattern = [(i * box.width, j * box.length, 0) for i in range(n_boxes_w) for j in range(n_boxes_l)]
         usable_space = self.calc_usable_space(pattern, box)
-        patterns_to_check.extend((n_boxes, usable_space, pattern))
+        patterns_to_check.append((n_boxes, usable_space, pattern))
         if n_boxes == max_boxes:
             return pattern, max_boxes
         
@@ -47,7 +47,7 @@ class Pallet:
         n_boxes = int(n_boxes_w * n_boxes_l)
         pattern = [(i * box.length, j * box.width, 90) for i in range(n_boxes_w) for j in range(n_boxes_l)]
         usable_space = self.calc_usable_space(pattern, box)
-        patterns_to_check.extend((n_boxes, usable_space, pattern))
+        patterns_to_check.append((n_boxes, usable_space, pattern))
         if n_boxes == max_boxes:
             return pattern, max_boxes
 

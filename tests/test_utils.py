@@ -55,7 +55,7 @@ def test_calc_free_space_rectangles():
     expected_right = (max_x, 0, pallet.width - max_x, pallet.length)
 
     # Call the method
-    free_rectangles = pallet.calc_free_space_rectangles(pallet, box, pattern)
+    free_rectangles = pallet.calc_free_space_rectangles(pattern, box)
 
     # Check the results
     assert len(free_rectangles) == 2

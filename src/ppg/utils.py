@@ -12,7 +12,6 @@ class Pallet:
     def __init__(self, width, length):
         self.width = width
         self.length = length
-        self.free_rectangles = [(0, 0, width, length)]  # Initially, the entire pallet is free
 
     def place_greedy(self, box):
         """
@@ -25,77 +24,151 @@ class Pallet:
             list: List of tuples representing the poses (x, y, theta).
             int: Total number of boxes placed.
         """
-        poses = []
-        total_boxes = 0
+        patterns_to_check = []
+        explored_patterns = []
+        max_boxes = self.calculate_upper_bound(box)
+        if max_boxes == 0:
+            return [], 0
 
-        while True:
-            # Find the best placement for the box
-            best_rect = None
-            best_orientation = None
-            min_waste = float('inf')
+        # Initialize patterns with boxes without rotation and boxes with rotation
+        # Without rotation
+        n_boxes_w = self.width // box.width
+        n_boxes_l = self.length // box.length
+        n_boxes = int(n_boxes_w * n_boxes_l)
+        pattern = [(i * box.width, j * box.length, 0) for i in range(n_boxes_w) for j in range(n_boxes_l)]
+        usable_space = self.calc_usable_space(pattern)
+        patterns_to_check.extend((n_boxes, usable_space, pattern))
+        if n_boxes == max_boxes:
+            return pattern, max_boxes
+        
+        # With rotation
+        n_boxes_w = self.width // box.length
+        n_boxes_l = self.length // box.width
+        n_boxes = int(n_boxes_w * n_boxes_l)
+        pattern = [(i * box.length, j * box.width, 90) for i in range(n_boxes_w) for j in range(n_boxes_l)]
+        usable_space = self.calc_usable_space(pattern, box)
+        patterns_to_check.extend((n_boxes, usable_space, pattern))
+        if n_boxes == max_boxes:
+            return pattern, max_boxes
 
-            for rect in self.free_rectangles:
-                x, y, rect_w, rect_l = rect
+        while patterns_to_check:
+            # Take the pattern with the most usable space
+            n_boxes, usable_space, pattern = max(patterns_to_check, key=lambda x: x[1])
+            patterns_to_check.remove((n_boxes, usable_space, pattern))
 
-                # Try placing the box without rotation
-                if rect_w >= box.width and rect_l >= box.length:
-                    waste = (rect_w - box.width) * rect_l + rect_w * (rect_l - box.length)
-                    if waste < min_waste:
-                        min_waste = waste
-                        best_rect = rect
-                        best_orientation = (box.width, box.length, 0)
+            # Check for free space
+            free_space_rectangles = self.calc_free_space_rectangles(pattern)
+            # For each free rectangle, check if boxes can be placed
+            usable_rectangles = [
+                rect for rect in free_space_rectangles if self.check_free_space_rectangle(rect, box)
+            ]
+            if not usable_rectangles:
+                # No more boxes can be placed
+                explored_patterns.append((n_boxes, usable_space, pattern))
+                continue    
+            else:
+                # Choose biggest usable rectangle to fill
+                rect_to_fill = max(usable_rectangles, key=lambda r: r[2] * r[3])
+                # Fill the free space with boxes both with and without rotation and add to patterns_to_check
+                x, y, w, l = rect_to_fill
+                
+                # Without rotation
+                n_boxes_w = w // box.width
+                n_boxes_l = l // box.length
+                n_boxes_rect_1 = int(n_boxes_w * n_boxes_l)
+                pattern_rect_1 = [
+                    (x + i * box.width, y + j * box.length, 0)
+                    for i in range(n_boxes_w)
+                    for j in range(n_boxes_l)
+                ]
+                usable_space = self.calc_usable_space(pattern + pattern_rect_1)
+                patterns_to_check.append((n_boxes + n_boxes_rect_1, usable_space, pattern + pattern_rect_1))
+                if n_boxes + n_boxes_rect_1 == max_boxes:
+                    return pattern + pattern_rect_1, max_boxes
+                
+                # With rotation
+                n_boxes_w = w // box.length
+                n_boxes_l = l // box.width
+                n_boxes_rect_2 = int(n_boxes_w * n_boxes_l)
+                pattern_rect_2 = [
+                    (x + i * box.length, y + j * box.width, 90)
+                    for i in range(n_boxes_w)
+                    for j in range(n_boxes_l)
+                ]
+                usable_space = self.calc_usable_space(pattern + pattern_rect_2)
+                patterns_to_check.append((n_boxes + n_boxes_rect_2, usable_space, pattern + pattern_rect_2))
+                if n_boxes + n_boxes_rect_2 == max_boxes:
+                    return pattern + pattern_rect_2, max_boxes
+                
+                # Add the better pattern to patterns_to_check
+                if n_boxes_rect_1 >= n_boxes_rect_2:
+                    patterns_to_check.append((n_boxes + n_boxes_rect_1, usable_space, pattern + pattern_rect_1))
+                else:
+                    patterns_to_check.append((n_boxes + n_boxes_rect_2, usable_space, pattern + pattern_rect_2))
 
-                # Try placing the box with rotation
-                if rect_w >= box.length and rect_l >= box.width:
-                    waste = (rect_w - box.length) * rect_l + rect_w * (rect_l - box.width)
-                    if waste < min_waste:
-                        min_waste = waste
-                        best_rect = rect
-                        best_orientation = (box.length, box.width, 90)
+        # Return the best pattern
+        best_pattern = max(explored_patterns, key=lambda x: x[0])
+        return best_pattern[2], best_pattern[0]
+    
+    def calculate_upper_bound(self, box):
+        """Calculate the upper bound for the number of boxes that can fit on the pallet."""
+        pallet_area = self.width * self.length
+        box_area = box.width * box.length
+        return pallet_area // box_area
 
-            # If no placement is found, terminate
-            if not best_rect:
-                break
-
-            # Place the box
-            x, y, rect_w, rect_l = best_rect
-            box_w, box_l, theta = best_orientation
-            poses.append((x, y, theta))
-            total_boxes += 1
-
-            # Split the rectangle into smaller rectangles
-            self.free_rectangles.remove(best_rect)
-            if rect_w > box_w:
-                self.free_rectangles.append((x + box_w, y, rect_w - box_w, rect_l))
-            if rect_l > box_l:
-                self.free_rectangles.append((x, y + box_l, box_w, rect_l - box_l))
-
-            # Remove overlapping rectangles (optional for efficiency)
-            self.free_rectangles = self.prune_free_rectangles()
-
-        return poses, total_boxes
-
-    def prune_free_rectangles(self):
+    def calc_usable_space(self, pattern, box):
+        """Calculate the usable space for a given pattern. This includes both the space that is already taken in by boxes as well as the space that can still be taken in by boxes."""
+        area_box = box.width * box.length
+        amount_boxes = len(pattern)
+        used_space = amount_boxes * area_box
+        free_space_rectangles = self.calc_free_space_rectangles(pattern, box)
+        return self.width * self.length - used_space
+    
+    def calc_free_space_rectangles(self, pallet, box, pattern):
         """
-        Remove redundant rectangles from the free rectangle list.
-        """
-        pruned = []
-        for rect in self.free_rectangles:
-            x, y, w, l = rect
-            if all(not self.is_contained(rect, other) for other in self.free_rectangles):
-                pruned.append(rect)
-        return pruned
+        Calculate two large rectangles representing the free space in the pallet.
 
-    @staticmethod
-    def is_contained(rect1, rect2):
-        """
-        Check if rect1 is fully contained in rect2.
-        """
-        x1, y1, w1, l1 = rect1
-        x2, y2, w2, l2 = rect2
-        return x1 >= x2 and y1 >= y2 and x1 + w1 <= x2 + w2 and y1 + l1 <= y2 + l2
+        Args:
+            pallet (Pallet): The pallet dimensions (width, length).
+            pattern (list): A list of placed boxes, each as (x, y, theta).
 
-def visualize(box, pallet, poses):
+        Returns:
+            list: Two rectangles (above and right), as (x, y, width, length).
+        """
+        # Step 1: Determine the covered area
+        max_x = max(x + (box.width if theta == 0 else box.length) for x, y, theta in pattern)
+        max_y = max(y + (box.length if theta == 0 else box.width) for x, y, theta in pattern)
+
+        # Step 2: Calculate the remaining rectangles
+        rectangles = []
+
+        # Rectangle above the covered area
+        above_rect = (0, max_y, pallet.width, pallet.length - max_y)
+        rectangles.append(above_rect)
+
+        # Rectangle to the right of the covered area
+        right_rect = (max_x, 0, pallet.width - max_x, pallet.length)
+        rectangles.append(right_rect)
+        return rectangles
+
+    def check_free_space_rectangle(self, rect, box):
+        """
+        Check if a box can fit in a free space rectangle.
+
+        Args:
+            rect (tuple): A rectangle as (x, y, width, length).
+            box (Box): The box dimensions.
+
+        Returns:
+            bool: True if the box can fit, False otherwise.
+        """
+        _, _, rect_width, rect_length = rect
+
+        # Check if the box fits in either orientation
+        return (box.width <= rect_width and box.length <= rect_length) or \
+            (box.length <= rect_width and box.width <= rect_length)
+
+def visualize(box, pallet, pattern):
     """
     Visualize the placement of boxes on the pallet.
 
@@ -118,7 +191,7 @@ def visualize(box, pallet, poses):
     )
 
     # Draw each box
-    for x, y, theta in poses:
+    for x, y, theta in pattern:
         if theta == 0:
             w, l = box.width, box.length
         else:

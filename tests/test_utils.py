@@ -62,5 +62,34 @@ def test_calc_free_space_rectangles():
     assert free_rectangles[0] == expected_above
     assert free_rectangles[1] == expected_right
 
+def test_calc_usable_space():
+    """Test the calc_usable_space method."""
+    # Create a pallet and a box
+    pallet = Pallet(120, 100)
+    box = Box(20, 10)
 
+    # Define the pattern of placed boxes
+    pattern = [
+        (0, 0, 0),  # Box at (0, 0), no rotation
+        (20, 0, 0),  # Box at (20, 0), no rotation
+    ]
+
+    # Mock the calc_free_space_rectangles and check_free_space_rectangle methods
+    pallet.calc_free_space_rectangles = lambda pattern, box: [
+        (40, 0, 80, 100),  # Remaining space to the right
+        (0, 10, 120, 90),  # Remaining space above
+    ]
+    pallet.check_free_space_rectangle = lambda rect, box: True
+
+    # Calculate the expected usable space
+    box_area = box.width * box.length
+    used_space = len(pattern) * box_area
+    free_space = (80 * 100) + (120 * 90)  # Areas of the two free rectangles
+    expected_usable_space = used_space + free_space
+
+    # Call the method
+    usable_space = pallet.calc_usable_space(pattern, box)
+
+    # Check the result
+    assert usable_space == expected_usable_space
 

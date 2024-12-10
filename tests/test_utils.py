@@ -93,3 +93,22 @@ def test_calc_usable_space():
     # Check the result
     assert usable_space == expected_usable_space
 
+def test_place_greedy():
+    """Test the place_greedy method."""
+    # Create a pallet and a box
+    pallet = Pallet(120, 100)
+    box = Box(20, 10)
+
+    # Call the method
+    pattern, total_boxes = pallet.place_greedy(box)
+
+    # Expected results
+    max_boxes = (120 // box.width) * (100 // box.length)  # Full pallet
+    assert total_boxes == max_boxes
+    assert len(pattern) == max_boxes
+    for x, y, theta in pattern:
+        assert 0 <= x < 120
+        assert 0 <= y < 100
+        assert theta in {0, 90}  # Ensure valid rotations
+
+

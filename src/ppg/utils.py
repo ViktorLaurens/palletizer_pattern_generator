@@ -36,10 +36,7 @@ class Pallet:
         n_boxes_l = self.length // box.length
         n_boxes = int(n_boxes_w * n_boxes_l)
         pattern = [(i * box.width, j * box.length, 0) for i in range(n_boxes_w) for j in range(n_boxes_l)]
-        if pattern:
-            usable_space = self.calc_usable_space(pattern, box)
-        else:
-            usable_space = 0
+        usable_space = self.calc_usable_space(pattern, box)
         patterns_to_check.append((n_boxes, usable_space, pattern))
         if n_boxes == max_boxes:
             return pattern, max_boxes
@@ -49,10 +46,7 @@ class Pallet:
         n_boxes_l = self.length // box.width
         n_boxes = int(n_boxes_w * n_boxes_l)
         pattern = [(i * box.length, j * box.width, 90) for i in range(n_boxes_w) for j in range(n_boxes_l)]
-        if pattern:
-            usable_space = self.calc_usable_space(pattern, box)
-        else:
-            usable_space = 0
+        usable_space = self.calc_usable_space(pattern, box)
         patterns_to_check.append((n_boxes, usable_space, pattern))
         if n_boxes == max_boxes:
             return pattern, max_boxes
@@ -147,6 +141,8 @@ class Pallet:
             list: Two rectangles (above and right), as (x, y, width, length).
         """
         # Step 1: Determine the covered area
+        if not pattern:
+            return []
         max_x = max(x + (box.width if theta == 0 else box.length) for x, y, theta in pattern)
         max_y = max(y + (box.length if theta == 0 else box.width) for x, y, theta in pattern)
 
@@ -214,3 +210,45 @@ def visualize(box, pallet, pattern, title="Palletizing Pattern"):
 
     plt.show()
 
+def visualize_multiple(pallet, box_patterns, title="Palletizing Pattern"):
+    """
+    Visualize the placement of multiple box types on the pallet.
+
+    Args:
+        pallet (Pallet): The pallet dimensions.
+        box_patterns (list): A list of tuples (Box, pattern, color), where:
+                             - Box: The box dimensions.
+                             - pattern: List of tuples representing the poses (x, y, theta).
+                             - color: The color to use for the boxes of this type.
+        title (str): Title of the plot.
+    """
+    fig, ax = plt.subplots(figsize=(10, 8))
+    ax.set_xlim(0, pallet.width)
+    ax.set_ylim(0, pallet.length)
+    ax.set_aspect('equal')
+    ax.set_title(title)
+    ax.set_xlabel("Width (cm)")
+    ax.set_ylabel("Length (cm)")
+
+    # Draw the pallet
+    ax.add_patch(
+        plt.Rectangle((0, 0), pallet.width, pallet.length, edgecolor='black', facecolor='lightgray', lw=2)
+    )
+
+    # Draw each box type
+    for box, pattern, color in box_patterns:
+        for x, y, theta in pattern:
+            if theta == 0:
+                w, l = box.width, box.length
+            else:
+                w, l = box.length, box.width
+            ax.add_patch(
+                plt.Rectangle((x, y), w, l, edgecolor=color, facecolor=color, alpha=0.5, lw=1)
+            )
+
+    # Add a legend
+    handles = [plt.Rectangle((0, 0), 1, 1, color=color, alpha=0.5) for _, _, color in box_patterns]
+    labels = [f"Box ({box.width}x{box.length} cm)" for box, _, _ in box_patterns]
+    ax.legend(handles, labels, loc='upper right')
+
+    plt.show()

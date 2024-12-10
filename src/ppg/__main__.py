@@ -1,4 +1,4 @@
-from .utils import Box, Pallet, visualize
+from .utils import Box, Pallet, visualize, visualize_multiple
 
 def main():
     """
@@ -36,7 +36,6 @@ def main():
             pattern1, total_boxes1 = pallet.place_greedy(box1)
             print(f"First Box (40x30 cm):")
             print(f"Total Boxes Placed: {total_boxes1}")
-            visualize(box1, pallet, pattern1, title="First Box (40x30 cm)")
 
             # Solve for the second box size in the remaining free space
             free_space_rectangles = pallet.calc_free_space_rectangles(pattern1, box1)
@@ -51,17 +50,22 @@ def main():
 
             print(f"Second Box (22x17 cm):")
             print(f"Total Boxes Placed: {total_boxes2}")
-            visualize(box2, pallet, pattern2, title="Second Box (22x17 cm)")
-
+            
+            # Combine and visualize both patterns on a single plot
+            visualize_multiple(
+                pallet,
+                [(box1, pattern1, "blue"), (box2, pattern2, "green")],
+                title="Combined Packing Patterns for Two Box Sizes"
+            )
             print(f"\nTotal Boxes Placed: {total_boxes1 + total_boxes2}")
-            continue
+            continue # Skip the visualization at the end
         elif choice == "0":
             print("Exiting the program. Goodbye!\n")
             break
         else:
             print("Invalid choice! Please try again.")
-            continue
-
+            continue # Skip the visualization at the end
+        
         # Solve for a single box size
         pattern, total_boxes = pallet.place_greedy(box)
         print(f"Optimal Placement for Box ({box.width}x{box.length} cm):")

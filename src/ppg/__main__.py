@@ -29,7 +29,7 @@ def main():
         elif choice == "4":
             # Bonus case with two different box sizes
             pallet = Pallet(120, 100)
-            box1 = Box(40, 30)
+            box1 = Box(40, 27)
             box2 = Box(22, 17)
 
             # Solve for the first box size
@@ -68,6 +68,6 @@ def main():
         print(f"Total Boxes Placed: {total_boxes}")
         visualize(box, pallet, pattern, title=f"Optimal Placement for Box ({box.width}x{box.length} cm)")
         print("\n------------------------------\n")
-        
+
 if __name__ == "__main__":
     main()

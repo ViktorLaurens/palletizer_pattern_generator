@@ -81,7 +81,7 @@ class Pallet:
                     for i in range(n_boxes_w)
                     for j in range(n_boxes_l)
                 ]
-                usable_space = self.calc_usable_space(pattern + pattern_rect_1)
+                usable_space = self.calc_usable_space(pattern + pattern_rect_1, box)
                 patterns_to_check.append((n_boxes + n_boxes_rect_1, usable_space, pattern + pattern_rect_1))
                 if n_boxes + n_boxes_rect_1 == max_boxes:
                     return pattern + pattern_rect_1, max_boxes
@@ -95,7 +95,7 @@ class Pallet:
                     for i in range(n_boxes_w)
                     for j in range(n_boxes_l)
                 ]
-                usable_space = self.calc_usable_space(pattern + pattern_rect_2)
+                usable_space = self.calc_usable_space(pattern + pattern_rect_2, box)
                 patterns_to_check.append((n_boxes + n_boxes_rect_2, usable_space, pattern + pattern_rect_2))
                 if n_boxes + n_boxes_rect_2 == max_boxes:
                     return pattern + pattern_rect_2, max_boxes
@@ -129,7 +129,7 @@ class Pallet:
                 usable_space += w * l
         return usable_space
     
-    def calc_free_space_rectangles(self, box, pattern):
+    def calc_free_space_rectangles(self, pattern, box):
         """
         Calculate two large rectangles representing the free space in the pallet.
 

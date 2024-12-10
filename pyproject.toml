@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "palletizer_pattern_generator"
+version = "0.1.0"
+description = "A Python project for optimal placing calculations for boxes on a pallet."
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Viktor Laurens De Groote", email = "viktor.degroote@gmail.com" }
+]
+dependencies = [
+    "pytest>=7.0.0",  # Add more dependencies as required
+]
+
+[tool.setuptools]
+packages = { find = { where = ["src"] } }  # Use `find` to dynamically locate packages.
+
+[tool.setuptools.package-dir]
+"" = "src"  # Tells setuptools to look in the `src/` folder for packages.
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[project.scripts]
+ppg = "ppg.__main__:main"  # Entry point script

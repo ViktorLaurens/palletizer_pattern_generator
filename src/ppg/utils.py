@@ -36,7 +36,7 @@ class Pallet:
         n_boxes_l = self.length // box.length
         n_boxes = int(n_boxes_w * n_boxes_l)
         pattern = [(i * box.width, j * box.length, 0) for i in range(n_boxes_w) for j in range(n_boxes_l)]
-        usable_space = self.calc_usable_space(pattern)
+        usable_space = self.calc_usable_space(pattern, box)
         patterns_to_check.extend((n_boxes, usable_space, pattern))
         if n_boxes == max_boxes:
             return pattern, max_boxes
@@ -57,7 +57,7 @@ class Pallet:
             patterns_to_check.remove((n_boxes, usable_space, pattern))
 
             # Check for free space
-            free_space_rectangles = self.calc_free_space_rectangles(pattern)
+            free_space_rectangles = self.calc_free_space_rectangles(pattern, box)
             # For each free rectangle, check if boxes can be placed
             usable_rectangles = [
                 rect for rect in free_space_rectangles if self.check_free_space_rectangle(rect, box)
@@ -129,7 +129,7 @@ class Pallet:
                 usable_space += w * l
         return usable_space
     
-    def calc_free_space_rectangles(self, pallet, box, pattern):
+    def calc_free_space_rectangles(self, box, pattern):
         """
         Calculate two large rectangles representing the free space in the pallet.
 
@@ -148,11 +148,11 @@ class Pallet:
         rectangles = []
 
         # Rectangle above the covered area
-        above_rect = (0, max_y, pallet.width, pallet.length - max_y)
+        above_rect = (0, max_y, self.width, self.length - max_y)
         rectangles.append(above_rect)
 
         # Rectangle to the right of the covered area
-        right_rect = (max_x, 0, pallet.width - max_x, pallet.length)
+        right_rect = (max_x, 0, self.width - max_x, self.length)
         rectangles.append(right_rect)
         return rectangles
 

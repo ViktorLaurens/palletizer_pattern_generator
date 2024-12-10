@@ -1,19 +1,19 @@
-from .utils import calculate_upper_bound
+from .utils import Box, Pallet
 
 def main():
     """
     Main entry point of the program
     """
+    # Define pallet and box
+    pallet = Pallet(120, 100)
+    box = Box(22, 17)
 
-    test_cases = [
-        {"pallet_w": 120, "pallet_l": 100, "box_w": 22, "box_l": 17},
-        {"pallet_w": 70, "pallet_l": 60, "box_w": 40, "box_l": 30}
-    ]
+    # Run greedy placement
+    poses, total_boxes = pallet.place_greedy(box)
+    print(f"Total boxes placed: {total_boxes}")
 
-    for case in test_cases:
-        pallet_width, pallet_length = case["pallet_w"], case["pallet_l"]
-        box_width, box_length = case["box_w"], case["box_l"]
-        print(f"Upper bound for pallet ({pallet_width}x{pallet_length}) and box ({box_width}x{box_length}): {calculate_upper_bound(pallet_width, pallet_length, box_width, box_length)}")
-
+    # Visualize the packing pattern
+    pallet.visualize(box, poses)
+    
 if __name__ == "__main__":
     main()

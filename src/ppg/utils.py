@@ -173,20 +173,21 @@ class Pallet:
         return (box.width <= rect_width and box.length <= rect_length) or \
             (box.length <= rect_width and box.width <= rect_length)
 
-def visualize(box, pallet, pattern):
+def visualize(box, pallet, pattern, title="Palletizing Pattern"):
     """
     Visualize the placement of boxes on the pallet.
 
     Args:
         box (Box): The box dimensions.
         pallet (Pallet): The pallet dimensions.
-        poses (list): List of tuples representing the poses (x, y, theta).
+        pattern (list): List of tuples representing the poses (x, y, theta).
+        title (str): Title of the plot.
     """
     fig, ax = plt.subplots(figsize=(10, 8))
     ax.set_xlim(0, pallet.width)
     ax.set_ylim(0, pallet.length)
     ax.set_aspect('equal')
-    ax.set_title("Palletizing Pattern")
+    ax.set_title(title)  # Use the dynamic title here
     ax.set_xlabel("Width (cm)")
     ax.set_ylabel("Length (cm)")
 

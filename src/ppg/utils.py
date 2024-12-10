@@ -95,17 +95,18 @@ class Pallet:
         x2, y2, w2, l2 = rect2
         return x1 >= x2 and y1 >= y2 and x1 + w1 <= x2 + w2 and y1 + l1 <= y2 + l2
 
-def visualize(self, box, poses):
+def visualize(box, pallet, poses):
     """
     Visualize the placement of boxes on the pallet.
 
     Args:
         box (Box): The box dimensions.
+        pallet (Pallet): The pallet dimensions.
         poses (list): List of tuples representing the poses (x, y, theta).
     """
     fig, ax = plt.subplots(figsize=(10, 8))
-    ax.set_xlim(0, self.width)
-    ax.set_ylim(0, self.length)
+    ax.set_xlim(0, pallet.width)
+    ax.set_ylim(0, pallet.length)
     ax.set_aspect('equal')
     ax.set_title("Palletizing Pattern")
     ax.set_xlabel("Width (cm)")
@@ -113,7 +114,7 @@ def visualize(self, box, poses):
 
     # Draw the pallet
     ax.add_patch(
-        plt.Rectangle((0, 0), self.width, self.length, edgecolor='black', facecolor='lightgray', lw=2)
+        plt.Rectangle((0, 0), pallet.width, pallet.length, edgecolor='black', facecolor='lightgray', lw=2)
     )
 
     # Draw each box
@@ -127,3 +128,4 @@ def visualize(self, box, poses):
         )
 
     plt.show()
+
